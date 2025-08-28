@@ -3,10 +3,11 @@
   margin: 0;
   box-sizing: border-box;
   scroll-behavior: smooth;
+  text-align: justify;
 }
 :root {
   /* Primary brand color (buttons, links) */
-  --primary-color: #004080;
+  --primary-color: #00d3a7;
 
   /* Secondary brand accent (hover, icons, badges) */
   --accent-color: #00cc99;
