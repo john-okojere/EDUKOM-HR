@@ -23,4 +23,23 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   });
 });
+
+document.addEventListener("DOMContentLoaded", () => {
+  const params = new URLSearchParams(window.location.search);
+  const status = params.get("sent");
+  if (!status) return;
+
+  const alert = document.createElement("div");
+  alert.className = "alert " + (status === "1" ? "alert-success" : "alert-danger");
+  alert.textContent =
+    status === "1"
+      ? "✅ Thank you! Your message has been sent."
+      : "❌ Sorry, there was an error sending your message. Please try again.";
+  document.querySelector("#contact form").prepend(alert);
+
+  history.replaceState({}, document.title, window.location.pathname + "#contact");
+});
+
 </script>
+
+
