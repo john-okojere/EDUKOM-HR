@@ -27,7 +27,7 @@ def _get_bool(name: str, default: bool = False) -> bool:
         return default
     return str(val).strip().lower() in {'1', 'true', 'yes', 'y', 'on'}
 
-SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'dev-insecure-secret-key-change')
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
 
 DEBUG = _get_bool('DJANGO_DEBUG', True)
 
@@ -74,48 +74,20 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'edukom_hr.wsgi.application'
 
-_DATABASE_URL = os.environ.get('DATABASE_URL', '').strip()
-if _DATABASE_URL:
-    u = urlparse(_DATABASE_URL)
-    if u.scheme.startswith('postgres'):
-        DATABASES = {
-            'default': {
-                'ENGINE': 'django.db.backends.postgresql',
-                'NAME': (u.path or '/')[1:] or '',
-                'USER': u.username or '',
-                'PASSWORD': u.password or '',
-                'HOST': u.hostname or '',
-                'PORT': str(u.port or ''),
-            }
-        }
-    elif u.scheme.startswith('mysql'):
-        DATABASES = {
-            'default': {
-                'ENGINE': 'django.db.backends.mysql',
-                'NAME': (u.path or '/')[1:] or '',
-                'USER': u.username or '',
-                'PASSWORD': u.password or '',
-                'HOST': u.hostname or '',
-                'PORT': str(u.port or ''),
-            }
-        }
-    elif u.scheme.startswith('sqlite'):
-        if _DATABASE_URL in {'sqlite://:memory:', 'sqlite:///:memory:'}:
-            db_name = ':memory:'
-        else:
-            db_name = (u.path or '/db.sqlite3')
-            if db_name.startswith('/'):
-                db_name = db_name[1:]
-        DATABASES = { 'default': { 'ENGINE': 'django.db.backends.sqlite3', 'NAME': str(BASE_DIR / db_name) } }
-    else:
-        DATABASES = { 'default': { 'ENGINE': 'django.db.backends.sqlite3', 'NAME': BASE_DIR / 'db.sqlite3' } }
-else:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
-        }
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': os.environ.get('MYSQL_DATABASE', 'edukom_hr'),
+        'USER': os.environ.get('MYSQL_USER', 'root'),
+        'PASSWORD': os.environ.get('MYSQL_PASSWORD', ''),
+        'HOST': os.environ.get('MYSQL_HOST', 'localhost'),
+        'PORT': os.environ.get('MYSQL_PORT', '3306'),
+        'OPTIONS': {
+            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+        },
     }
+}
 
 AUTH_PASSWORD_VALIDATORS = [
     { 'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator' },
